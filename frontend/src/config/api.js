@@ -43,14 +43,14 @@ export async function sendImage(file) {
   if (!(file instanceof Blob)) return { success: false, error: 'Invalid image file' };
   const form = new FormData();
   form.append('file', file);
-  return requestJson(`${BASE_URL}/chat`, { method: 'POST', body: form });
+  return requestJson(`${BASE_URL}/api/chat`, { method: 'POST', body: form });
 }
 
 export async function sendAudio(file) {
   if (!(file instanceof Blob)) return { success: false, error: 'Invalid audio file' };
   const form = new FormData();
   form.append('file', file);
-  return requestJson(`${BASE_URL}/chat`, { method: 'POST', body: form });
+  return requestJson(`${BASE_URL}/api/chat`, { method: 'POST', body: form });
 }
 
 export default { checkHealth, sendText, sendImage, sendAudio };
