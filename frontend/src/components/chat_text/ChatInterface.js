@@ -83,38 +83,44 @@ const ChatInterface = ({ currentChat, onChatUpdate }) => {
   };
 
   // Format bot response with LaTeX and structured content
+// ✅ Clean, simplified Gemini response formatter
 const formatBotResponse = (responseData) => {
   try {
     console.log("🔍 Raw bot response:", responseData);
 
-    // Direct string
+    // If it's a direct string, return as-is
     if (typeof responseData === "string") return responseData;
 
-    // Our backend response (success + response.text_content)
-    if (responseData?.response?.text_content) {
-      return responseData.response.text_content;
+    // ✅ If backend sends structured response like:
+    // { success: true, input: "...", response: [ { type: "text", content: "..." } ] }
+    if (responseData?.response && Array.isArray(responseData.response)) {
+      return responseData.response
+        .map(item => item.content) // extract only text
+        .join("\n")
+        .trim();
     }
 
-    // Gemini raw format
-    if (responseData?.candidates?.[0]?.content?.parts?.[0]?.text) {
-      return responseData.candidates[0].content.parts[0].text;
+    // ✅ If backend already returns single string (Option 1 backend)
+    if (typeof responseData?.response === "string") {
+      return responseData.response.trim();
     }
 
-    // Nested Gemini inside "response"
-    if (responseData?.response?.candidates?.[0]?.content?.parts?.[0]?.text) {
-      return responseData.response.candidates[0].content.parts[0].text;
+    // ✅ Handle Gemini raw structure
+    if (responseData?.candidates?.[0]?.content?.parts) {
+      return responseData.candidates[0].content.parts
+        .map(p => p.text)
+        .join("\n")
+        .trim();
     }
 
-    // Plain "text"
-    if (responseData?.text) return responseData.text;
-
-    // Fallback: pretty print unknown responses
-    return JSON.stringify(responseData, null, 2);
+    // Fallback
+    return "⚠️ No meaningful response.";
   } catch (err) {
     console.error("Response formatting error:", err);
     return "⚠️ Error formatting bot response.";
   }
 };
+
 
 
   const handleSendMessage = async messageData => {
