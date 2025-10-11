@@ -131,9 +131,9 @@ const Login = () => {
           <div className="form-group">
             <label htmlFor="password">Password</label>
             <div className="input-wrapper">
-              {!passwordFocused && !formData.password && (
+              {/* {!passwordFocused && !formData.password && (
                 <Lock size={20} className="input-icon" />
-              )}
+              )} */}
               <input
                 type={showPassword ? 'text' : 'password'}
                 id="password"
